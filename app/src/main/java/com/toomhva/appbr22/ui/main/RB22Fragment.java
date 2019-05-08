@@ -40,12 +40,15 @@ public class RB22Fragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         pageViewModel = ViewModelProviders.of(this).get(PageViewModel.class);
         int index = 1;
         if (getArguments() != null) {
             index = getArguments().getInt(ARG_SECTION_NUMBER);
         }
-        pageViewModel.setIndex(index);
+        pageViewModel.setIndex(index); // this will create a notification through modelview
+
+
         BillingClientFactory billingClientFactory =
                 new BillingClientFactory(this.getContext(), new RepeatConnectionTransformer<>());
         rxBilling = new RxBillingImpl(billingClientFactory);
@@ -63,7 +66,7 @@ public class RB22Fragment extends Fragment {
         TextView tv=
                 (TextView)  nothingView.findViewById(R.id.plaintext__fragment__textView2);
         tv.setText(" some text");
-        Timber.d("--->onCreateVIew");
+        Timber.d("--->onCreateView");
         return nothingView;
     }
 
@@ -74,7 +77,7 @@ public class RB22Fragment extends Fragment {
                 .subscribe((//PurchasesUpdate
                             it) -> {
                             final String x = it.toString();
-                            Timber.d("no err");
+                            Timber.d("no err: %s ",x);
                         },
                         (err) -> {
                             Timber.e(err);
@@ -82,6 +85,11 @@ public class RB22Fragment extends Fragment {
                 )
         );
         Timber.d("--->onStart");
+    }
+    @Override
+    public void onPause () {
+        super.onPause();
+        Timber.d("--->onPause");
     }
 
 
